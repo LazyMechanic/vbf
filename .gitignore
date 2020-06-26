@@ -3,3 +3,4 @@ vbf
 *.so
 *.dylib
 *.dll
+*.exe
