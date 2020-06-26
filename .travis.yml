@@ -13,10 +13,6 @@ matrix:
           packages:
             - g++-9
             - gcc-9
-    ### OSX
-    - os: osx
-      compiler: gcc
-      osx_image: xcode11.2
 
 install:
     # Download V
