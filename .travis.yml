@@ -1,0 +1,98 @@
+language: cpp
+
+matrix:
+  fast_finish: true
+  include:
+    ### GCC
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+            - gcc-9
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - gcc-8
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - gcc-7
+    ### Clang
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-8
+          packages:
+            - clang-8
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-7
+          packages:
+            - clang-7
+    ###### OSX
+    ### GCC
+    - os: osx
+      compiler: gcc
+      osx_image: xcode9.4
+    - os: osx
+      compiler: gcc
+      osx_image: xcode10
+    - os: osx
+      compiler: gcc
+      osx_image: xcode11
+    - os: osx
+      compiler: gcc
+      osx_image: xcode11.2
+    ### Clang
+    - os: osx
+      compiler: clang
+      osx_image: xcode9.4
+    - os: osx
+      compiler: clang
+      osx_image: xcode10
+    - os: osx
+      compiler: clang
+      osx_image: xcode11
+    - os: osx
+      compiler: clang
+      osx_image: xcode11.2
+
+install:
+    # Download V
+    - sudo git clone https://github.com/vlang/v
+    - cd v
+    - sudo make
+
+    - export V="$(pwd)/v"
+
+script:
+    - cd "$TRAVIS_BUILD_DIR"
+    - $V .
+
+notifications:
+  email:
+    recipients:
+      - ${EMAIL}
+    on_success: never
+    on_failure: always
