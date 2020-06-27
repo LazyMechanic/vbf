@@ -1,6 +1,5 @@
 module main
 
-import cli
 import os
 
 const (
@@ -24,8 +23,7 @@ const (
 )
 
 fn main() {
-	cmd := init_cli()
-	text := get_prg_text(cmd) or { panic('failed to get program text') }
+	text := get_prg_text(os.args) or { panic('failed to get program text with error: $err') }
 	start_interpreter(text) or { panic('interpretation failed with error: $err') }
 }
 
@@ -33,7 +31,7 @@ fn start_interpreter(text string) ? {
 	mut cur_index := int(0)
 	mut i := int(0)
 	mut state_i := int(0)
-	mut arr := []i8{len: stack_size}
+	mut arr := []byte{len: stack_size}
 	mut state := []int{len: stack_size}
 	for i < text.len {
 		ch := text[i]
@@ -57,11 +55,11 @@ fn start_interpreter(text string) ? {
 				arr[cur_index]--
 			}
 			dot {
-				print(byte(arr[cur_index]).str())
+				print(arr[cur_index].str())
 			}
 			comma {
 				v := os.get_line()
-				arr[cur_index] = v.i8()
+				arr[cur_index] = byte(v.i8())
 			}
 			open {
 				if arr[cur_index] == 0 {
@@ -100,27 +98,19 @@ fn start_interpreter(text string) ? {
 	return none
 }
 
-fn init_cli() cli.Command {
-	mut cmd := cli.Command{
-		name: 'vbf',
-		description: 'Yet another brainfuck interpreter',
-		version: '1.0.0',
+fn get_prg_text(args []string) ?string {
+	if args.len > 2 {
+		return error('too much arguments, required 1 argument')
 	}
 
-	cmd.add_flag(cli.Flag{
-		flag: .string,
-		name: flag_text,
-		abbrev: flag_text_a,
-	})
-
-	cmd.parse(os.args)
-	return cmd
-}
-
-fn get_prg_text(cmd cli.Command) ?string {
-	text := cmd.flags.get_string(flag_text)?
+	if args.len < 2 {
+		return error('need to pass brainfuck program text in argument')
+	}
+	
+	text := args[1]
 	if text.len == 0 {
 		return error('program text is empty')
 	}
+
 	return text
 }
